@@ -3,6 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import plotly.express as px
 import pytz
+from datetime import datetime  # <--- DÒNG NÀY LÀ THUỐC CHỮA BỆNH ĐÂY Ạ
 
 st.set_page_config(page_title="Thống kê Hệ sinh thái", page_icon="📊", layout="wide")
 
@@ -27,7 +28,7 @@ st.markdown("<h2 style='text-align: center; color: #004B87; font-weight: 900; ma
 if st.button("🔄 Cập nhật số liệu mới nhất", use_container_width=True):
     st.cache_data.clear()
 
-@st.cache_data(ttl=60) # Lưu đệm 60s để đỡ load lại database liên tục
+@st.cache_data(ttl=60)
 def get_log_data():
     try:
         res = supabase.table("thong_ke_truy_cap").select("*").execute()
@@ -71,7 +72,6 @@ else:
     with col_chart2:
         st.markdown("#### 📈 Biểu đồ tăng trưởng theo Ngày")
         df_day = df_log.groupby('Ngày').size().reset_index(name='Lượt truy cập')
-        # Đảm bảo sắp xếp đúng thứ tự thời gian
         df_day['Ngày_sort'] = pd.to_datetime(df_day['Ngày'], format='%d/%m/%Y')
         df_day = df_day.sort_values('Ngày_sort')
         
@@ -84,7 +84,5 @@ else:
         df_show = df_log[['Thời gian', 'ten_app']].sort_values(by='Thời gian', ascending=False)
         df_show['Thời gian'] = df_show['Thời gian'].dt.strftime('%H:%M:%S - %d/%m/%Y')
         df_show.columns = ['Thời gian truy cập', 'Tên Ứng dụng']
-        
-        # Đánh số thứ tự
         df_show.index = range(1, len(df_show) + 1)
         st.dataframe(df_show, use_container_width=True)
