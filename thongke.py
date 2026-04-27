@@ -501,6 +501,6 @@ with st.expander(f"Xem tất cả {len(df_filtered):,} bản ghi trong kỳ '{lo
 # Footer
 st.markdown("""
 <div style="text-align:center;padding:40px 0 20px;color:#64748b;font-size:0.8rem; font-weight: 500;">
-    Hệ Sinh Thái Analytics Dashboard • Cập nhật tự động mỗi 60 giây
+    Hệ Sinh Thái Analytics Dashboard • Cập nhật tự động
 </div>
 """, unsafe_allow_html=True)
