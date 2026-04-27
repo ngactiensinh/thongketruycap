@@ -241,7 +241,8 @@ df_log['year_int']  = df_log['Thời gian'].dt.year
 # =============================================
 # BỘ LỌC
 # =============================================
-st.markdown('<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">', unsafe_allow_html=True)
+st.write("") # Tạo khoảng trắng cho thoáng
+
 col_filter, col_app_filter = st.columns(2)
 
 with col_filter:
@@ -256,7 +257,8 @@ with col_app_filter:
     st.markdown("<span style='font-size:0.8rem;font-weight:700;color:#004B87;text-transform:uppercase;letter-spacing:1px;'>📱 Ứng dụng</span>", unsafe_allow_html=True)
     app_list = ["Tất cả ứng dụng"] + sorted(df_log["ten_app"].dropna().unique().tolist())
     selected_app = st.selectbox("App", app_list, label_visibility="collapsed")
-st.markdown('</div>', unsafe_allow_html=True)
+
+st.write("---") # Vẽ một đường kẻ ngang mờ để phân cách
 
 # Áp dụng bộ lọc
 df_filtered    = df_log.copy()
