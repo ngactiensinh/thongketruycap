@@ -57,7 +57,7 @@ st.markdown("""
         background: linear-gradient(135deg, #ffffff 0%, #a8c8ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        letter-spacing: -0.5px;
+        leer-spacing: -0.5px;
         margin: 0;
     }
     .dashboard-subtitle {
@@ -65,7 +65,7 @@ st.markdown("""
         color: #64748b;
         font-weight: 400;
         margin-top: 8px;
-        letter-spacing: 2px;
+        leer-spacing: 2px;
         text-transform: uppercase;
     }
 
@@ -99,7 +99,7 @@ st.markdown("""
 
     .metric-icon {
         font-size: 1.8rem;
-        margin-bottom: 12px;
+        margin-boom: 12px;
         display: block;
     }
     .metric-label {
@@ -107,14 +107,14 @@ st.markdown("""
         font-weight: 600;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        margin-bottom: 6px;
+        leer-spacing: 1.5px;
+        margin-boom: 6px;
     }
     .metric-value {
         font-size: 2.5rem;
         font-weight: 900;
         line-height: 1;
-        letter-spacing: -1px;
+        leer-spacing: -1px;
     }
     .metric-card.red   .metric-value { color: #ff4d6d; }
     .metric-card.blue  .metric-value { color: #60a5fa; }
@@ -292,7 +292,8 @@ def get_log_data():
     if not supabase_ok:
         return pd.DataFrame()
     try:
-        res = supabase.table("thong_ke_truy_cap").select("*").execute()
+        # Ép Supabase lôi 5000 dòng mới nhất lên đầu thay vì bị kẹt ở 1000 dòng cũ
+        res = supabase.table("thong_ke_truy_cap").select("*").order("created_at", desc=True).limit(5000).execute()
         return pd.DataFrame(res.data)
     except Exception:
         return pd.DataFrame()
