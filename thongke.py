@@ -7,17 +7,17 @@ import pytz
 from datetime import datetime, timedelta
 
 # =============================================
-# CAU HINH TRANG
+# CẤU HÌNH TRANG
 # =============================================
 st.set_page_config(
-    page_title="He Sinh Thai | Analytics",
+    page_title="Hệ Sinh Thái | Analytics",
     page_icon="🌐",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
 # =============================================
-# CSS NANG CAO - GIAO DIEN DARK PREMIUM
+# CSS NÂNG CAO - GIAO DIỆN DARK PREMIUM
 # =============================================
 st.markdown("""
 <style>
@@ -166,35 +166,34 @@ now_vn = datetime.now(tz_vn)
 # =============================================
 st.markdown("""
 <div class="dashboard-header">
-    <p class="dashboard-subtitle">&#127758; He Sinh Thai Ung Dung</p>
-    <h1 class="dashboard-title">Trung Tam Phan Tich Truy Cap</h1>
+    <p class="dashboard-subtitle">🌐 Hệ Sinh Thái Ứng Dụng</p>
+    <h1 class="dashboard-title">Trung Tâm Phân Tích Truy Cập</h1>
 </div>
 """, unsafe_allow_html=True)
 
 col_time, col_btn = st.columns([3, 1])
 with col_time:
-    time_str = now_vn.strftime('%H:%M:%S \u2014 %d/%m/%Y')
-    st.markdown(
-        '<div style="padding:8px 0;">'
-        '<span class="status-live"><span class="dot-live"></span> Du lieu thoi gian thuc</span>'
-        '<span style="color:#475569;font-size:0.8rem;margin-left:16px;">Cap nhat luc: ' + time_str + '</span>'
-        '</div>',
-        unsafe_allow_html=True
-    )
+    time_str = now_vn.strftime('%H:%M:%S — %d/%m/%Y')
+    st.markdown(f"""
+        <div style="padding:8px 0;">
+            <span class="status-live"><span class="dot-live"></span> Dữ liệu thời gian thực</span>
+            <span style="color:#475569;font-size:0.8rem;margin-left:16px;">Cập nhật lúc: {time_str}</span>
+        </div>
+    """, unsafe_allow_html=True)
 with col_btn:
-    if st.button("Lam moi du lieu", use_container_width=True):
+    if st.button("Làm mới dữ liệu", use_container_width=True):
         st.session_state.pop("df_log_cache", None)
         st.session_state.pop("df_log_ts", None)
         st.rerun()
 
 # =============================================
-# LAY DU LIEU
+# LẤY DỮ LIỆU
 # =============================================
 def get_log_data():
     if not supabase_ok:
         return pd.DataFrame()
     try:
-        res = supabase.table("thong_ke_truy_cap").select("*").order("created_at", desc=True).limit(5000).execute()
+        res = supabase.table("thong_ke_truy_cap").select("*").order("created_at", desc=True).limit(50000).execute()
         return pd.DataFrame(res.data)
     except Exception:
         return pd.DataFrame()
@@ -208,89 +207,89 @@ if ("df_log_cache" not in st.session_state
 df_log = st.session_state["df_log_cache"]
 
 if df_log.empty:
-    st.info("Chua co du lieu truy cap nao duoc ghi nhan.")
+    st.info("Chưa có dữ liệu truy cập nào được ghi nhận.")
     st.stop()
 
 # =============================================
-# XU LY THOI GIAN + CHUAN HOA TEN APP
+# XỬ LÝ THỜI GIAN + CHUẨN HÓA TÊN APP
 # =============================================
-df_log['Thoi gian'] = pd.to_datetime(df_log['created_at']).dt.tz_convert(tz_vn)
+df_log['Thời gian'] = pd.to_datetime(df_log['created_at']).dt.tz_convert(tz_vn)
 
-# Chuan hoa ten app: gop cac bien the khong dau / loi chinh ta vao ten chinh
+# Chuẩn hóa tên app: gộp các biến thể không dấu / lỗi chính tả vào tên chính
 app_rename = {
-    'Diem Tin Bao Chi':      'Diem tin Bao chi',
-    'diem tin bao chi':      'Diem tin Bao chi',
-    'DiemTinBaoChi':         'Diem tin Bao chi',
+    'Diem Tin Bao Chi':      'Điểm tin Báo chí',
+    'diem tin bao chi':      'Điểm tin Báo chí',
+    'DiemTinBaoChi':         'Điểm tin Báo chí',
 }
 df_log['ten_app'] = df_log['ten_app'].replace(app_rename)
 
-df_log['Ngay']      = df_log['Thoi gian'].dt.strftime('%d/%m/%Y')
-df_log['Thang']     = df_log['Thoi gian'].dt.strftime('%m/%Y')
-df_log['Gio']       = df_log['Thoi gian'].dt.hour
-df_log['Thu']       = df_log['Thoi gian'].dt.day_name()
-df_log['month_int'] = df_log['Thoi gian'].dt.month
-df_log['year_int']  = df_log['Thoi gian'].dt.year
+df_log['Ngày']      = df_log['Thời gian'].dt.strftime('%d/%m/%Y')
+df_log['Tháng']     = df_log['Thời gian'].dt.strftime('%m/%Y')
+df_log['Giờ']       = df_log['Thời gian'].dt.hour
+df_log['Thứ']       = df_log['Thời gian'].dt.day_name()
+df_log['month_int'] = df_log['Thời gian'].dt.month
+df_log['year_int']  = df_log['Thời gian'].dt.year
 
 # =============================================
-# BO LOC
+# BỘ LỌC
 # =============================================
 col_filter, col_app_filter = st.columns(2)
 
 with col_filter:
-    st.markdown("<span style='font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;'>Ky thong ke</span>", unsafe_allow_html=True)
-    loai_loc = st.selectbox("Ky", [
-        "Tat ca thoi gian", "Hom nay", "7 Ngay Gan Nhat", "Thang nay",
-        "Quy I", "Quy II", "Quy III", "Quy IV",
-        "6 Thang Dau Nam", "6 Thang Cuoi Nam", "9 Thang", "Nam nay"
+    st.markdown("<span style='font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;'>Kỳ thống kê</span>", unsafe_allow_html=True)
+    loai_loc = st.selectbox("Kỳ", [
+        "Tất cả thời gian", "Hôm nay", "7 Ngày Gần Nhất", "Tháng này",
+        "Quý I", "Quý II", "Quý III", "Quý IV",
+        "6 Tháng Đầu Năm", "6 Tháng Cuối Năm", "9 Tháng", "Năm nay"
     ], label_visibility="collapsed")
 
 with col_app_filter:
-    st.markdown("<span style='font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;'>Ung dung</span>", unsafe_allow_html=True)
-    app_list = ["Tat ca ung dung"] + sorted(df_log["ten_app"].dropna().unique().tolist())
+    st.markdown("<span style='font-size:0.8rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;'>Ứng dụng</span>", unsafe_allow_html=True)
+    app_list = ["Tất cả ứng dụng"] + sorted(df_log["ten_app"].dropna().unique().tolist())
     selected_app = st.selectbox("App", app_list, label_visibility="collapsed")
 
-# Ap dung bo loc
+# Áp dụng bộ lọc
 df_filtered    = df_log.copy()
 current_year   = now_vn.year
 current_month  = now_vn.month
 
-if loai_loc != "Tat ca thoi gian":
-    if loai_loc == "Hom nay":
-        df_filtered = df_filtered[df_filtered['Ngay'] == now_vn.strftime('%d/%m/%Y')]
-    elif loai_loc == "7 Ngay Gan Nhat":
+if loai_loc != "Tất cả thời gian":
+    if loai_loc == "Hôm nay":
+        df_filtered = df_filtered[df_filtered['Ngày'] == now_vn.strftime('%d/%m/%Y')]
+    elif loai_loc == "7 Ngày Gần Nhất":
         cutoff = now_vn - timedelta(days=7)
-        df_filtered = df_filtered[df_filtered['Thoi gian'] >= cutoff]
+        df_filtered = df_filtered[df_filtered['Thời gian'] >= cutoff]
     else:
         df_filtered = df_filtered[df_filtered['year_int'] == current_year]
-        if   loai_loc == "Thang nay":        df_filtered = df_filtered[df_filtered['month_int'] == current_month]
-        elif loai_loc == "Quy I":            df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3])]
-        elif loai_loc == "Quy II":           df_filtered = df_filtered[df_filtered['month_int'].isin([4,5,6])]
-        elif loai_loc == "Quy III":          df_filtered = df_filtered[df_filtered['month_int'].isin([7,8,9])]
-        elif loai_loc == "Quy IV":           df_filtered = df_filtered[df_filtered['month_int'].isin([10,11,12])]
-        elif loai_loc == "6 Thang Dau Nam":  df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3,4,5,6])]
-        elif loai_loc == "6 Thang Cuoi Nam": df_filtered = df_filtered[df_filtered['month_int'].isin([7,8,9,10,11,12])]
-        elif loai_loc == "9 Thang":          df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3,4,5,6,7,8,9])]
+        if   loai_loc == "Tháng này":        df_filtered = df_filtered[df_filtered['month_int'] == current_month]
+        elif loai_loc == "Quý I":            df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3])]
+        elif loai_loc == "Quý II":           df_filtered = df_filtered[df_filtered['month_int'].isin([4,5,6])]
+        elif loai_loc == "Quý III":          df_filtered = df_filtered[df_filtered['month_int'].isin([7,8,9])]
+        elif loai_loc == "Quý IV":           df_filtered = df_filtered[df_filtered['month_int'].isin([10,11,12])]
+        elif loai_loc == "6 Tháng Đầu Năm":  df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3,4,5,6])]
+        elif loai_loc == "6 Tháng Cuối Năm": df_filtered = df_filtered[df_filtered['month_int'].isin([7,8,9,10,11,12])]
+        elif loai_loc == "9 Tháng":          df_filtered = df_filtered[df_filtered['month_int'].isin([1,2,3,4,5,6,7,8,9])]
 
-if selected_app != "Tat ca ung dung":
+if selected_app != "Tất cả ứng dụng":
     df_filtered = df_filtered[df_filtered['ten_app'] == selected_app]
 
 # =============================================
-# TINH TOAN METRICS
+# TÍNH TOÁN METRICS
 # =============================================
 tong_all     = len(df_log)
 luot_loc     = len(df_filtered)
-luot_hom_nay = len(df_log[df_log['Ngay'] == now_vn.strftime('%d/%m/%Y')])
+luot_hom_nay = len(df_log[df_log['Ngày'] == now_vn.strftime('%d/%m/%Y')])
 app_count    = df_filtered["ten_app"].nunique()
 
 hom_qua_str  = (now_vn - timedelta(days=1)).strftime('%d/%m/%Y')
-luot_hom_qua = len(df_log[df_log['Ngay'] == hom_qua_str])
+luot_hom_qua = len(df_log[df_log['Ngày'] == hom_qua_str])
 if luot_hom_qua > 0:
     delta_pct   = ((luot_hom_nay - luot_hom_qua) / luot_hom_qua) * 100
     arrow       = "▲" if delta_pct >= 0 else "▼"
-    delta_str   = arrow + " " + str(round(abs(delta_pct), 1)) + "% so hom qua"
+    delta_str   = f"{arrow} {abs(delta_pct):.1f}% so với hôm qua"
     delta_class = "delta-up" if delta_pct >= 0 else "delta-down"
 else:
-    delta_str   = "Chua co du lieu hom qua"
+    delta_str   = "Chưa có dữ liệu hôm qua"
     delta_class = "delta-neu"
 
 # =============================================
@@ -299,26 +298,25 @@ else:
 c1, c2, c3, c4 = st.columns(4)
 
 card_data = [
-    (c1, "red",    "🌐", "Tong Toan He Thong", str(tong_all),        "Tat ca thoi gian", "delta-neu"),
-    (c2, "blue",   "📊", "Ky Dang Xem",         str(luot_loc),        loai_loc,           "delta-neu"),
-    (c3, "orange", "⚡", "Hom Nay",             str(luot_hom_nay),    delta_str,          delta_class),
-    (c4, "green",  "📱", "App Hoat Dong",        str(app_count),       "Trong ky chon",    "delta-neu"),
+    (c1, "red",    "🌐", "Tổng Toàn Hệ Thống", f"{tong_all:,}",        "Tất cả thời gian", "delta-neu"),
+    (c2, "blue",   "📊", "Kỳ Đang Xem",         f"{luot_loc:,}",        loai_loc,           "delta-neu"),
+    (c3, "orange", "⚡", "Hôm Nay",             f"{luot_hom_nay:,}",    delta_str,          delta_class),
+    (c4, "green",  "📱", "App Hoạt Động",        f"{app_count:,}",       "Trong kỳ chọn",    "delta-neu"),
 ]
 
 for col, color, icon, label, value, sub, dclass in card_data:
     with col:
-        st.markdown(
-            '<div class="metric-card ' + color + '">'
-            '<span class="metric-icon">' + icon + '</span>'
-            '<div class="metric-label">' + label + '</div>'
-            '<div class="metric-value">' + value + '</div>'
-            '<span class="metric-delta ' + dclass + '">' + sub + '</span>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+            <div class="metric-card {color}">
+                <span class="metric-icon">{icon}</span>
+                <div class="metric-label">{label}</div>
+                <div class="metric-value">{value}</div>
+                <span class="metric-delta {dclass}">{sub}</span>
+            </div>
+        """, unsafe_allow_html=True)
 
 if df_filtered.empty:
-    st.warning("Khong co du lieu trong ky da chon.")
+    st.warning("Không có dữ liệu trong kỳ đã chọn.")
     st.stop()
 
 # =============================================
@@ -338,58 +336,58 @@ CHART_LAYOUT = dict(
 )
 
 # =============================================
-# BIEU DO 1: Pie + Line
+# BIỂU ĐỒ 1: Pie + Line
 # =============================================
-st.markdown('<div class="section-title">Phan tich tong quan</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Phân tích tổng quan</div>', unsafe_allow_html=True)
 col1, col2 = st.columns([1, 2])
 
 with col1:
     df_app = df_filtered['ten_app'].value_counts().reset_index()
-    df_app.columns = ['App', 'Luot']
+    df_app.columns = ['App', 'Lượt']
     COLORS = ['#C8102E','#004B87','#ff9900','#10b981','#8b5cf6','#f43f5e','#0ea5e9']
     fig_pie = go.Figure(go.Pie(
-        labels=df_app['App'], values=df_app['Luot'],
+        labels=df_app['App'], values=df_app['Lượt'],
         hole=0.55,
         marker=dict(colors=COLORS[:len(df_app)], line=dict(color='#0a0e1a', width=2)),
         textinfo='percent',
         textfont=dict(size=11, family='Be Vietnam Pro'),
-        hovertemplate="<b>%{label}</b><br>%{value} luot<br>%{percent}<extra></extra>"
+        hovertemplate="<b>%{label}</b><br>%{value} lượt<br>%{percent}<extra></extra>"
     ))
     fig_pie.add_annotation(
-        text="<b>" + str(luot_loc) + "</b><br>tong luot",
+        text=f"<b>{luot_loc:,}</b><br><span style='font-size:10px;'>tổng lượt</span>",
         x=0.5, y=0.5, showarrow=False,
         font=dict(size=16, color='#e2e8f0', family='Be Vietnam Pro')
     )
     fig_pie.update_layout(
-        title=dict(text="Ty trong theo App", font=dict(size=13, color='#94a3b8')),
+        title=dict(text="Tỷ trọng theo App", font=dict(size=13, color='#94a3b8')),
         showlegend=True, **CHART_LAYOUT
     )
     st.plotly_chart(fig_pie, use_container_width=True)
 
 with col2:
-    df_day = df_filtered.groupby('Ngay').size().reset_index(name='Luot')
-    df_day['sort_key'] = pd.to_datetime(df_day['Ngay'], format='%d/%m/%Y')
+    df_day = df_filtered.groupby('Ngày').size().reset_index(name='Lượt')
+    df_day['sort_key'] = pd.to_datetime(df_day['Ngày'], format='%d/%m/%Y')
     df_day = df_day.sort_values('sort_key')
-    df_day['MA7'] = df_day['Luot'].rolling(7, min_periods=1).mean()
+    df_day['MA7'] = df_day['Lượt'].rolling(7, min_periods=1).mean()
 
     fig_line = go.Figure()
     fig_line.add_trace(go.Scatter(
-        x=df_day['Ngay'], y=df_day['Luot'],
-        name='Luot truy cap',
+        x=df_day['Ngày'], y=df_day['Lượt'],
+        name='Lượt truy cập',
         fill='tozeroy', fillcolor='rgba(200,16,46,0.08)',
         line=dict(color='#C8102E', width=2.5),
         marker=dict(size=6, color='#ff4d6d'),
-        hovertemplate="<b>%{x}</b><br>%{y} luot<extra></extra>"
+        hovertemplate="<b>%{x}</b><br>%{y} lượt<extra></extra>"
     ))
     if len(df_day) >= 3:
         fig_line.add_trace(go.Scatter(
-            x=df_day['Ngay'], y=df_day['MA7'].round(1),
-            name='Trung binh 7 ngay',
+            x=df_day['Ngày'], y=df_day['MA7'].round(1),
+            name='Trung bình 7 ngày',
             line=dict(color='#60a5fa', width=1.5, dash='dot'),
             hovertemplate="<b>%{x}</b><br>TB: %{y}<extra></extra>"
         ))
     fig_line.update_layout(
-        title=dict(text="Tang truong theo Ngay", font=dict(size=13, color='#94a3b8')),
+        title=dict(text="Tăng trưởng theo Ngày", font=dict(size=13, color='#94a3b8')),
         xaxis=dict(gridcolor='rgba(255,255,255,0.04)', tickangle=-30),
         yaxis=dict(gridcolor='rgba(255,255,255,0.04)'),
         hovermode='x unified', **CHART_LAYOUT
@@ -397,30 +395,30 @@ with col2:
     st.plotly_chart(fig_line, use_container_width=True)
 
 # =============================================
-# BIEU DO 2: Gio + App ranking
+# BIỂU ĐỒ 2: Giờ + App ranking
 # =============================================
-st.markdown('<div class="section-title">Phan tich hanh vi</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Phân tích hành vi</div>', unsafe_allow_html=True)
 col3, col4 = st.columns(2)
 
 with col3:
-    df_hour = df_filtered.groupby('Gio').size().reset_index(name='Luot')
-    all_hours = pd.DataFrame({'Gio': range(24)})
-    df_hour = all_hours.merge(df_hour, on='Gio', how='left').fillna(0)
+    df_hour = df_filtered.groupby('Giờ').size().reset_index(name='Lượt')
+    all_hours = pd.DataFrame({'Giờ': range(24)})
+    df_hour = all_hours.merge(df_hour, on='Giờ', how='left').fillna(0)
 
     fig_bar_hour = go.Figure(go.Bar(
-        x=df_hour['Gio'], y=df_hour['Luot'],
+        x=df_hour['Giờ'], y=df_hour['Lượt'],
         marker=dict(
-            color=df_hour['Luot'],
+            color=df_hour['Lượt'],
             colorscale=[[0,'rgba(200,16,46,0.2)'],[1,'#C8102E']],
             line=dict(width=0)
         ),
-        hovertemplate="<b>%{x}:00</b><br>%{y} luot<extra></extra>"
+        hovertemplate="<b>%{x}:00</b><br>%{y} lượt<extra></extra>"
     ))
     tick_vals = list(range(0, 24, 2))
     fig_bar_hour.update_layout(
-        title=dict(text="Phan bo theo Gio trong Ngay", font=dict(size=13, color='#94a3b8')),
+        title=dict(text="Phân bổ theo Giờ trong Ngày", font=dict(size=13, color='#94a3b8')),
         xaxis=dict(tickmode='array', tickvals=tick_vals,
-                   ticktext=[str(h) + "h" for h in tick_vals],
+                   ticktext=[f"{h}h" for h in tick_vals],
                    gridcolor='rgba(255,255,255,0.04)'),
         yaxis=dict(gridcolor='rgba(255,255,255,0.04)'),
         bargap=0.2, **CHART_LAYOUT
@@ -429,21 +427,21 @@ with col3:
 
 with col4:
     df_app_bar = df_filtered['ten_app'].value_counts().reset_index()
-    df_app_bar.columns = ['App', 'Luot']
-    df_app_bar = df_app_bar.sort_values('Luot')
+    df_app_bar.columns = ['App', 'Lượt']
+    df_app_bar = df_app_bar.sort_values('Lượt')
 
     fig_bar_app = go.Figure(go.Bar(
-        x=df_app_bar['Luot'], y=df_app_bar['App'],
+        x=df_app_bar['Lượt'], y=df_app_bar['App'],
         orientation='h',
         marker=dict(
-            color=df_app_bar['Luot'],
+            color=df_app_bar['Lượt'],
             colorscale=[[0,'rgba(0,75,135,0.3)'],[1,'#004B87']],
             line=dict(width=0)
         ),
-        hovertemplate="<b>%{y}</b><br>%{x} luot<extra></extra>"
+        hovertemplate="<b>%{y}</b><br>%{x} lượt<extra></extra>"
     ))
     fig_bar_app.update_layout(
-        title=dict(text="Xep Hang Ung Dung", font=dict(size=13, color='#94a3b8')),
+        title=dict(text="Xếp hạng Ứng dụng", font=dict(size=13, color='#94a3b8')),
         xaxis=dict(gridcolor='rgba(255,255,255,0.04)'),
         yaxis=dict(gridcolor='rgba(255,255,255,0.04)'),
         **CHART_LAYOUT
@@ -451,48 +449,46 @@ with col4:
     st.plotly_chart(fig_bar_app, use_container_width=True)
 
 # =============================================
-# INSIGHT TU DONG
+# INSIGHT TỰ ĐỘNG
 # =============================================
-st.markdown('<div class="section-title">Nhan xet tu dong</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Nhận xét tự động</div>', unsafe_allow_html=True)
 
-peak_hour = int(df_filtered.groupby('Gio').size().idxmax()) if not df_filtered.empty else 0
+peak_hour = int(df_filtered.groupby('Giờ').size().idxmax()) if not df_filtered.empty else 0
 top_app   = df_filtered['ten_app'].value_counts().idxmax() if not df_filtered.empty else "—"
-top_day   = df_filtered.groupby('Ngay').size().idxmax() if not df_filtered.empty else "—"
-avg_day   = df_filtered.groupby('Ngay').size().mean() if not df_filtered.empty else 0
+top_day   = df_filtered.groupby('Ngày').size().idxmax() if not df_filtered.empty else "—"
+avg_day   = df_filtered.groupby('Ngày').size().mean() if not df_filtered.empty else 0
 
 ins1, ins2, ins3, ins4 = st.columns(4)
 insights = [
-    (ins1, "Gio cao diem",  str(peak_hour) + ":00 – " + str(peak_hour+1) + ":00", "Luot truy cap dat dinh"),
-    (ins2, "App dan dau",   top_app,                                                "Nhieu luot nhat ky nay"),
-    (ins3, "Ngay ban nhat", top_day,                                                "Dinh truy cap trong ky"),
-    (ins4, "TB moi ngay",   str(round(avg_day, 1)) + " luot",                      "Trong ky: " + loai_loc),
+    (ins1, "Giờ cao điểm",  f"{peak_hour}:00 – {peak_hour+1}:00", "Lượt truy cập đạt đỉnh"),
+    (ins2, "App dẫn đầu",   top_app,                              "Nhiều lượt nhất kỳ này"),
+    (ins3, "Ngày bận nhất", top_day,                              "Đỉnh truy cập trong kỳ"),
+    (ins4, "TB mỗi ngày",   f"{avg_day:.1f} lượt",                f"Trong kỳ: {loai_loc}"),
 ]
 for col, title, val, sub in insights:
     with col:
-        st.markdown(
-            '<div class="insight-card">'
-            '<div class="insight-title">' + title + '</div>'
-            '<div class="insight-value">' + val + '</div>'
-            '<div class="insight-sub">' + sub + '</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+            <div class="insight-card">
+                <div class="insight-title">{title}</div>
+                <div class="insight-value">{val}</div>
+                <div class="insight-sub">{sub}</div>
+            </div>
+        """, unsafe_allow_html=True)
 
 # =============================================
-# BANG CHI TIET
+# BẢNG CHI TIẾT
 # =============================================
-st.markdown('<div class="section-title">Nhat ky chi tiet</div>', unsafe_allow_html=True)
-with st.expander("Xem tat ca " + str(len(df_filtered)) + " ban ghi trong ky '" + loai_loc + "'"):
-    df_show = df_filtered[['Thoi gian', 'ten_app']].sort_values('Thoi gian', ascending=False).copy()
-    df_show['Thoi gian'] = df_show['Thoi gian'].dt.strftime('%H:%M:%S — %d/%m/%Y')
-    df_show.columns = ['Thoi gian truy cap', 'Ten ung dung']
+st.markdown('<div class="section-title">Nhật ký chi tiết</div>', unsafe_allow_html=True)
+with st.expander(f"Xem tất cả {len(df_filtered):,} bản ghi trong kỳ '{loai_loc}'"):
+    df_show = df_filtered[['Thời gian', 'ten_app']].sort_values('Thời gian', ascending=False).copy()
+    df_show['Thời gian'] = df_show['Thời gian'].dt.strftime('%H:%M:%S — %d/%m/%Y')
+    df_show.columns = ['Thời gian truy cập', 'Tên ứng dụng']
     df_show.index = range(1, len(df_show) + 1)
     st.dataframe(df_show, use_container_width=True, height=400)
 
 # Footer
-st.markdown(
-    '<div style="text-align:center;padding:40px 0 20px;color:#1e293b;font-size:0.75rem;">'
-    'He Sinh Thai Analytics Dashboard • Cap nhat tu dong moi 60 giay'
-    '</div>',
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div style="text-align:center;padding:40px 0 20px;color:#1e293b;font-size:0.75rem;">
+    Hệ Sinh Thái Analytics Dashboard • Cập nhật tự động mỗi 60 giây
+</div>
+""", unsafe_allow_html=True)
