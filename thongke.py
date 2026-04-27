@@ -280,24 +280,31 @@ with col_time:
     </div>
     """, unsafe_allow_html=True)
 with col_btn:
-    if st.button("🔄 Làm mới dữ liệu", use_container_width=True):
-        st.cache_data.clear()
+    if st.button("Lam moi du lieu", use_container_width=True):
+        st.session_state.pop("df_log_cache", None)
+        st.session_state.pop("df_log_ts", None)
         st.rerun()
 
 # =============================================
-# LẤY DỮ LIỆU
+# LAY DU LIEU (dung session_state thay cache_data de tranh loi Python 3.14)
 # =============================================
-@st.cache_data(ttl=60)
 def get_log_data():
     if not supabase_ok:
         return pd.DataFrame()
     try:
         res = supabase.table("thong_ke_truy_cap").select("*").execute()
         return pd.DataFrame(res.data)
-    except:
+    except Exception:
         return pd.DataFrame()
 
-df_log = get_log_data()
+# Cache bang session_state voi TTL 60 giay
+_now_ts = datetime.now(tz_vn).timestamp()
+if ("df_log_cache" not in st.session_state
+        or _now_ts - st.session_state.get("df_log_ts", 0) > 60):
+    st.session_state["df_log_cache"] = get_log_data()
+    st.session_state["df_log_ts"] = _now_ts
+
+df_log = st.session_state["df_log_cache"]
 
 if df_log.empty:
     st.info("📭 Chưa có dữ liệu truy cập nào được ghi nhận.")
