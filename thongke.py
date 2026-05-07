@@ -223,15 +223,14 @@ if df_log.empty:
 # =============================================
 df_log['Thời gian'] = pd.to_datetime(df_log['created_at']).dt.tz_convert(tz_vn)
 
-# 🌟 LOẠI BỎ "ĐĂNG KÝ SỐ VĂN BẢN" RA KHỎI DỮ LIỆU BÁO CÁO 🌟
-df_log = df_log[~df_log['ten_app'].str.contains('Đăng ký Số văn bản|Đăng ký số văn bản|Dang ky so van ban|DangKySoVanBan', case=False, na=False)]
+# 🌟 QUÉT TRIỆT ĐỂ: LOẠI BỎ TẤT CẢ CÁC BIẾN THỂ CỦA "SỐ VĂN BẢN" & "SỐ VB" 🌟
+df_log = df_log[~df_log['ten_app'].str.contains('Số văn bản|Số VB|So van ban|So VB', case=False, na=False)]
 
 # Chuẩn hóa tên app
 app_rename = {
     'Diem Tin Bao Chi':      'Điểm tin Báo chí',
     'diem tin bao chi':      'Điểm tin Báo chí',
     'DiemTinBaoChi':         'Điểm tin Báo chí',
-    # Thêm 2 tân binh vào danh sách để nó hiện đẹp trên biểu đồ
     'Dang ky tin bai':       'Đăng ký Tin bài',
     'DangKyTinBai':          'Đăng ký Tin bài',
     'Theo doi nang luong':   'Theo dõi Nâng lương',
