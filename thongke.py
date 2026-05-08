@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 # =============================================
-# CSS NÂNG CAO - GIAO DIỆN LIGHT PREMIUM (SÁNG)
+# CSS NÂNG CAO - GIAO DIỆN DARK COMMAND CENTER (TỐI)
 # =============================================
 st.markdown("""
 <style>
@@ -27,9 +27,11 @@ st.markdown("""
         font-family: 'Be Vietnam Pro', sans-serif;
     }
 
+    /* Đổi toàn bộ nền thành màu Xanh đen sâu thẳm (Dark Blue/Black) */
     .stApp {
-        background-color: #f4f6f9;
-        color: #1e293b;
+        background-color: #060b14 !important;
+        background-image: radial-gradient(circle at 50% 0%, #112240 0%, #060b14 70%);
+        color: #e2e8f0;
     }
 
     #MainMenu, footer, header { visibility: hidden; }
@@ -42,114 +44,126 @@ st.markdown("""
     .dashboard-header::after {
         content: '';
         display: block;
-        width: 80px;
+        width: 120px;
         height: 4px;
-        background: linear-gradient(90deg, #C8102E, #004B87);
+        background: linear-gradient(90deg, #00f2fe, #4facfe);
         margin: 16px auto 0;
         border-radius: 2px;
+        box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
     }
     .dashboard-title {
         font-size: 2.2rem;
         font-weight: 900;
-        color: #004B87;
-        letter-spacing: -0.5px;
+        color: #ffffff;
+        letter-spacing: 1px;
         margin: 0;
         text-transform: uppercase;
+        text-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
     }
     .dashboard-subtitle {
         font-size: 0.9rem;
-        color: #64748b;
+        color: #38bdf8;
         font-weight: 600;
         margin-top: 8px;
         letter-spacing: 2px;
         text-transform: uppercase;
     }
 
+    /* Style cho các khối thẻ (Cards) với viền phát sáng (Glow) */
     .metric-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid #1e293b;
+        border-radius: 12px;
         padding: 24px 20px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .metric-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.1);
     }
     .metric-card::before {
         content: '';
         position: absolute;
         top: 0; left: 0; right: 0;
-        height: 4px;
+        height: 3px;
         border-radius: 16px 16px 0 0;
     }
-    .metric-card.red::before    { background: #C8102E; }
-    .metric-card.blue::before   { background: #004B87; }
-    .metric-card.orange::before { background: #f59e0b; }
-    .metric-card.green::before  { background: #10b981; }
+    
+    /* Màu sắc Neon cho viền trên của thẻ */
+    .metric-card.red::before    { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+    .metric-card.blue::before   { background: #0ea5e9; box-shadow: 0 0 10px #0ea5e9; }
+    .metric-card.orange::before { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+    .metric-card.green::before  { background: #10b981; box-shadow: 0 0 10px #10b981; }
 
-    .metric-icon  { font-size: 1.8rem; margin-bottom: 12px; display: block; }
-    .metric-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
-    .metric-value { font-size: 2.5rem; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+    .metric-icon  { font-size: 1.8rem; margin-bottom: 12px; display: block; opacity: 0.8;}
+    .metric-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+    .metric-value { font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -1px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
-    .metric-card.red    .metric-value { color: #C8102E; }
-    .metric-card.blue   .metric-value { color: #004B87; }
-    .metric-card.orange .metric-value { color: #d97706; }
-    .metric-card.green  .metric-value { color: #059669; }
+    /* Màu sắc Neon cho Chữ số liệu */
+    .metric-card.red    .metric-value { color: #fca5a5; text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);}
+    .metric-card.blue   .metric-value { color: #7dd3fc; text-shadow: 0 0 15px rgba(14, 165, 233, 0.4);}
+    .metric-card.orange .metric-value { color: #fcd34d; text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);}
+    .metric-card.green  .metric-value { color: #6ee7b7; text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);}
 
-    .metric-delta { font-size: 0.78rem; margin-top: 8px; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: 600; }
-    .delta-up  { background: #d1fae5; color: #059669; }
-    .delta-down{ background: #fee2e2; color: #dc2626; }
-    .delta-neu { background: #f1f5f9; color: #64748b; }
+    .metric-delta { font-size: 0.78rem; margin-top: 10px; padding: 4px 10px; border-radius: 20px; display: inline-block; font-weight: 600; }
+    .delta-up  { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);}
+    .delta-down{ background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);}
+    .delta-neu { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);}
 
     .section-title {
-        font-size: 0.9rem; font-weight: 800; color: #004B87;
+        font-size: 1rem; font-weight: 800; color: #38bdf8;
         text-transform: uppercase; letter-spacing: 1.5px;
         margin: 32px 0 16px;
         display: flex; align-items: center; gap: 8px;
     }
-    .section-title::after { content: ''; flex: 1; height: 2px; background: #e2e8f0; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #1e293b, transparent); }
 
-    .insight-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .insight-title { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    .insight-value { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
+    .insight-card { background: rgba(15, 23, 42, 0.5); border: 1px solid #1e293b; border-left: 3px solid #38bdf8; border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+    .insight-title { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .insight-value { font-size: 1.4rem; font-weight: 800; color: #f8fafc; }
     .insight-sub   { font-size: 0.8rem; color: #64748b; margin-top: 4px; }
 
-    .status-live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #059669; font-weight: 700; }
-    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+    .status-live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #10b981; font-weight: 700; text-shadow: 0 0 5px #10b981;}
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; box-shadow: 0 0 8px #10b981;}
     @keyframes pulse {
         0%, 100% { opacity: 1; transform: scale(1); }
-        50%       { opacity: 0.5; transform: scale(1.3); }
+        50%       { opacity: 0.5; transform: scale(1.5); }
     }
 
+    /* Style lại Form bộ lọc cho hợp nền tối */
     .stSelectbox > div > div {
-        background: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
+        background: #0f172a !important;
+        border: 1px solid #1e293b !important;
         border-radius: 8px !important;
-        color: #1e293b !important;
+        color: #f8fafc !important;
         font-weight: 500;
     }
+    .stSelectbox > div > div > div > svg { fill: #38bdf8 !important; }
+    
     .stButton > button {
-        background: #004B87 !important;
-        color: white !important; border: none !important;
+        background: rgba(14, 165, 233, 0.1) !important;
+        color: #38bdf8 !important; 
+        border: 1px solid #0ea5e9 !important;
         border-radius: 8px !important;
         font-family: 'Be Vietnam Pro', sans-serif !important;
         font-weight: 700 !important; letter-spacing: 0.5px !important;
         padding: 10px 24px !important; transition: all 0.3s !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 75, 135, 0.2);
     }
-    .stButton > button:hover { background: #C8102E !important; transform: translateY(-2px); box-shadow: 0 6px 8px -1px rgba(200, 16, 46, 0.3); }
+    .stButton > button:hover { background: #0ea5e9 !important; color: white !important; box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); }
 
     div[data-testid="stExpander"] {
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid #1e293b !important;
         border-radius: 12px !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .js-plotly-plot .plotly { background: transparent !important; }
+    
+    /* Làm nền bảng dữ liệu tối màu */
+    [data-testid="stDataFrame"] { background-color: transparent !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -174,8 +188,8 @@ now_vn = datetime.now(tz_vn)
 # =============================================
 st.markdown("""
 <div class="dashboard-header">
-    <p class="dashboard-subtitle">🌐 Hệ Sinh Thái Ứng Dụng</p>
-    <h1 class="dashboard-title">Trung Tâm Phân Tích Truy Cập</h1>
+    <p class="dashboard-subtitle">🌐 TGDV Ecosystem Platform</p>
+    <h1 class="dashboard-title">HỆ THỐNG TRUNG TÂM ĐIỀU HÀNH TỔNG HỢP</h1>
 </div>
 """, unsafe_allow_html=True)
 
@@ -184,12 +198,12 @@ with col_time:
     time_str = now_vn.strftime('%H:%M:%S — %d/%m/%Y')
     st.markdown(f"""
         <div style="padding:8px 0;">
-            <span class="status-live"><span class="dot-live"></span> Dữ liệu thời gian thực</span>
-            <span style="color:#64748b;font-size:0.8rem;margin-left:16px; font-weight: 500;">Cập nhật lúc: {time_str}</span>
+            <span class="status-live"><span class="dot-live"></span> Đang kết nối trực tuyến</span>
+            <span style="color:#64748b;font-size:0.8rem;margin-left:16px; font-weight: 500;">Dữ liệu đồng bộ lúc: {time_str}</span>
         </div>
     """, unsafe_allow_html=True)
 with col_btn:
-    if st.button("Làm mới dữ liệu", use_container_width=True):
+    if st.button("🔄 Đồng bộ dữ liệu", use_container_width=True):
         st.session_state.pop("df_log_cache", None)
         st.session_state.pop("df_log_ts", None)
         st.rerun()
@@ -223,7 +237,7 @@ if df_log.empty:
 # =============================================
 df_log['Thời gian'] = pd.to_datetime(df_log['created_at']).dt.tz_convert(tz_vn)
 
-# 🌟 QUÉT TRIỆT ĐỂ: LOẠI BỎ TẤT CẢ CÁC BIẾN THỂ CỦA "SỐ VĂN BẢN" & "SỐ VB" 🌟
+# Loại bỏ các biến thể của Đăng ký số văn bản
 df_log = df_log[~df_log['ten_app'].str.contains('Số văn bản|Số VB|So van ban|So VB', case=False, na=False)]
 
 # Chuẩn hóa tên app
@@ -238,7 +252,6 @@ app_rename = {
 }
 df_log['ten_app'] = df_log['ten_app'].replace(app_rename)
 
-# Kiểm tra lại xem sau khi loại bỏ thì còn dữ liệu không
 if df_log.empty:
     st.warning("Hiện tại không có dữ liệu cho các ứng dụng trong hệ thống.")
     st.stop()
@@ -253,12 +266,11 @@ df_log['year_int']  = df_log['Thời gian'].dt.year
 # =============================================
 # BỘ LỌC
 # =============================================
-st.write("") # Tạo khoảng trắng cho thoáng
-
+st.write("") 
 col_filter, col_app_filter = st.columns(2)
 
 with col_filter:
-    st.markdown("<span style='font-size:0.8rem;font-weight:700;color:#004B87;text-transform:uppercase;letter-spacing:1px;'>📅 Kỳ thống kê</span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:0.8rem;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;'>📅 Chu kỳ phân tích</span>", unsafe_allow_html=True)
     loai_loc = st.selectbox("Kỳ", [
         "Tất cả thời gian", "Hôm nay", "7 Ngày Gần Nhất", "Tháng này",
         "Quý I", "Quý II", "Quý III", "Quý IV",
@@ -266,11 +278,11 @@ with col_filter:
     ], label_visibility="collapsed")
 
 with col_app_filter:
-    st.markdown("<span style='font-size:0.8rem;font-weight:700;color:#004B87;text-transform:uppercase;letter-spacing:1px;'>📱 Ứng dụng</span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:0.8rem;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;'>📱 Phân hệ ứng dụng</span>", unsafe_allow_html=True)
     app_list = ["Tất cả ứng dụng"] + sorted(df_log["ten_app"].dropna().unique().tolist())
     selected_app = st.selectbox("App", app_list, label_visibility="collapsed")
 
-st.write("---") # Vẽ một đường kẻ ngang mờ để phân cách
+st.write("---") 
 
 # Áp dụng bộ lọc
 df_filtered    = df_log.copy()
@@ -317,15 +329,15 @@ else:
     delta_class = "delta-neu"
 
 # =============================================
-# METRIC CARDS
+# METRIC CARDS (THẺ SỐ LIỆU PHÁT SÁNG)
 # =============================================
 c1, c2, c3, c4 = st.columns(4)
 
 card_data = [
-    (c1, "red",    "🌐", "Tổng Toàn Hệ Thống", f"{tong_all:,}",        "Tất cả thời gian", "delta-neu"),
-    (c2, "blue",   "📊", "Kỳ Đang Xem",         f"{luot_loc:,}",        loai_loc,           "delta-neu"),
-    (c3, "orange", "⚡", "Hôm Nay",             f"{luot_hom_nay:,}",    delta_str,          delta_class),
-    (c4, "green",  "📱", "App Hoạt Động",        f"{app_count:,}",       "Trong kỳ chọn",    "delta-neu"),
+    (c1, "red",    "🌐", "TỔNG TOÀN HỆ THỐNG", f"{tong_all:,}",        "Tất cả thời gian", "delta-neu"),
+    (c2, "blue",   "📊", "KỲ ĐANG PHÂN TÍCH",  f"{luot_loc:,}",        loai_loc,           "delta-neu"),
+    (c3, "orange", "⚡", "TRUY CẬP HÔM NAY",    f"{luot_hom_nay:,}",    delta_str,          delta_class),
+    (c4, "green",  "📱", "PHÂN HỆ HOẠT ĐỘNG",  f"{app_count:,}",       "Trong kỳ chọn",    "delta-neu"),
 ]
 
 for col, color, icon, label, value, sub, dclass in card_data:
@@ -344,46 +356,49 @@ if df_filtered.empty:
     st.stop()
 
 # =============================================
-# PLOTLY THEME (LIGHT MODE)
+# PLOTLY THEME (DARK MODE LỘT XÁC HOÀN TOÀN)
 # =============================================
 CHART_LAYOUT = dict(
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(0,0,0,0)',
-    font=dict(family='Be Vietnam Pro', color='#475569', size=12),
+    template='plotly_dark', # Sử dụng template tối mặc định của Plotly
+    paper_bgcolor='rgba(0,0,0,0)', # Nền trong suốt
+    plot_bgcolor='rgba(0,0,0,0)',  # Nền biểu đồ trong suốt
+    font=dict(family='Be Vietnam Pro', color='#cbd5e1', size=12),
     margin=dict(l=10, r=10, t=40, b=10),
     legend=dict(
-        bgcolor='rgba(255,255,255,0.8)',
-        bordercolor='#e2e8f0',
+        bgcolor='rgba(15,23,42,0.8)',
+        bordercolor='#334155',
         borderwidth=1,
-        font=dict(size=11, color='#1e293b')
+        font=dict(size=11, color='#f8fafc')
     )
 )
 
 # =============================================
 # BIỂU ĐỒ 1: Pie + Line
 # =============================================
-st.markdown('<div class="section-title">Phân tích tổng quan</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">📊 PHÂN TÍCH LƯU LƯỢNG TỔNG QUAN</div>', unsafe_allow_html=True)
 col1, col2 = st.columns([1, 2])
 
 with col1:
     df_app = df_filtered['ten_app'].value_counts().reset_index()
     df_app.columns = ['App', 'Lượt']
-    COLORS = ['#C8102E','#004B87','#f59e0b','#10b981','#8b5cf6','#f43f5e','#0ea5e9']
+    # Bảng màu Neon cực gắt
+    COLORS = ['#0ea5e9', '#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899']
+    
     fig_pie = go.Figure(go.Pie(
         labels=df_app['App'], values=df_app['Lượt'],
-        hole=0.55,
-        marker=dict(colors=COLORS[:len(df_app)], line=dict(color='#ffffff', width=2)),
+        hole=0.65, # Làm vòng donut mỏng lại cho giống radar
+        marker=dict(colors=COLORS[:len(df_app)], line=dict(color='#0f172a', width=2)),
         textinfo='percent',
         textfont=dict(size=11, family='Be Vietnam Pro', color='#ffffff'),
         hovertemplate="<b>%{label}</b><br>%{value} lượt<br>%{percent}<extra></extra>"
     ))
     fig_pie.add_annotation(
-        text=f"<b>{luot_loc:,}</b><br><span style='font-size:10px;'>tổng lượt</span>",
+        text=f"<b>{luot_loc:,}</b><br><span style='font-size:10px; color:#94a3b8;'>TỔNG LƯỢT</span>",
         x=0.5, y=0.5, showarrow=False,
-        font=dict(size=16, color='#1e293b', family='Be Vietnam Pro')
+        font=dict(size=20, color='#38bdf8', family='Be Vietnam Pro')
     )
     fig_pie.update_layout(
-        title=dict(text="Tỷ trọng theo App", font=dict(size=14, color='#004B87', weight='bold')),
+        title=dict(text="Tỷ trọng Phân hệ (Ecosystem Distribution)", font=dict(size=14, color='#e2e8f0', weight='bold')),
         showlegend=True, **CHART_LAYOUT
     )
     st.plotly_chart(fig_pie, use_container_width=True)
@@ -395,25 +410,27 @@ with col2:
     df_day['MA7'] = df_day['Lượt'].rolling(7, min_periods=1).mean()
 
     fig_line = go.Figure()
+    # Đường chính màu xanh biển Neon (Cyan)
     fig_line.add_trace(go.Scatter(
         x=df_day['Ngày'], y=df_day['Lượt'],
         name='Lượt truy cập',
-        fill='tozeroy', fillcolor='rgba(200,16,46,0.1)',
-        line=dict(color='#C8102E', width=3),
-        marker=dict(size=6, color='#C8102E'),
+        fill='tozeroy', fillcolor='rgba(14, 165, 233, 0.15)', # Gradient mờ ảo
+        line=dict(color='#0ea5e9', width=3, shape='spline'), # Đường cong mượt (spline)
+        marker=dict(size=6, color='#0ea5e9', line=dict(width=2, color='white')),
         hovertemplate="<b>%{x}</b><br>%{y} lượt<extra></extra>"
     ))
     if len(df_day) >= 3:
+        # Đường MA7 nét đứt màu cam phát sáng
         fig_line.add_trace(go.Scatter(
             x=df_day['Ngày'], y=df_day['MA7'].round(1),
             name='Trung bình 7 ngày',
-            line=dict(color='#004B87', width=2, dash='dot'),
+            line=dict(color='#f59e0b', width=2, dash='dot'),
             hovertemplate="<b>%{x}</b><br>TB: %{y}<extra></extra>"
         ))
     fig_line.update_layout(
-        title=dict(text="Tăng trưởng theo Ngày", font=dict(size=14, color='#004B87', weight='bold')),
-        xaxis=dict(gridcolor='#f1f5f9', tickangle=-30),
-        yaxis=dict(gridcolor='#f1f5f9'),
+        title=dict(text="Lưu lượng theo Ngày (Daily Traffic Trend)", font=dict(size=14, color='#e2e8f0', weight='bold')),
+        xaxis=dict(gridcolor='#1e293b', tickangle=-30, showgrid=False), # Tắt lưới dọc cho đỡ rối
+        yaxis=dict(gridcolor='#1e293b'),
         hovermode='x unified', **CHART_LAYOUT
     )
     st.plotly_chart(fig_line, use_container_width=True)
@@ -421,7 +438,7 @@ with col2:
 # =============================================
 # BIỂU ĐỒ 2: Giờ + App ranking
 # =============================================
-st.markdown('<div class="section-title">Phân tích hành vi</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">⏱️ BIỂU ĐỒ HÀNH VI VÀ XẾP HẠNG</div>', unsafe_allow_html=True)
 col3, col4 = st.columns(2)
 
 with col3:
@@ -429,23 +446,24 @@ with col3:
     all_hours = pd.DataFrame({'Giờ': range(24)})
     df_hour = all_hours.merge(df_hour, on='Giờ', how='left').fillna(0)
 
+    # Đổ gradient cho cột dọc (Đỏ đô đến Đỏ Neon)
     fig_bar_hour = go.Figure(go.Bar(
         x=df_hour['Giờ'], y=df_hour['Lượt'],
         marker=dict(
             color=df_hour['Lượt'],
-            colorscale=[[0,'#fca5a5'],[1,'#C8102E']],
-            line=dict(width=0)
+            colorscale=[[0,'#4c0519'],[1,'#f43f5e']], 
+            line=dict(width=1, color='#be123c')
         ),
         hovertemplate="<b>%{x}:00</b><br>%{y} lượt<extra></extra>"
     ))
     tick_vals = list(range(0, 24, 2))
     fig_bar_hour.update_layout(
-        title=dict(text="Phân bổ theo Giờ trong Ngày", font=dict(size=14, color='#004B87', weight='bold')),
+        title=dict(text="Phân bổ theo Khung giờ (Heatmap theo Giờ)", font=dict(size=14, color='#e2e8f0', weight='bold')),
         xaxis=dict(tickmode='array', tickvals=tick_vals,
                    ticktext=[f"{h}h" for h in tick_vals],
-                   gridcolor='#f1f5f9'),
-        yaxis=dict(gridcolor='#f1f5f9'),
-        bargap=0.2, **CHART_LAYOUT
+                   gridcolor='#1e293b'),
+        yaxis=dict(gridcolor='#1e293b'),
+        bargap=0.15, **CHART_LAYOUT
     )
     st.plotly_chart(fig_bar_hour, use_container_width=True)
 
@@ -454,19 +472,20 @@ with col4:
     df_app_bar.columns = ['App', 'Lượt']
     df_app_bar = df_app_bar.sort_values('Lượt')
 
+    # Gradient cột ngang (Xanh đậm đến Cyan)
     fig_bar_app = go.Figure(go.Bar(
         x=df_app_bar['Lượt'], y=df_app_bar['App'],
         orientation='h',
         marker=dict(
             color=df_app_bar['Lượt'],
-            colorscale=[[0,'#bae6fd'],[1,'#004B87']],
-            line=dict(width=0)
+            colorscale=[[0,'#0f172a'],[1,'#0ea5e9']],
+            line=dict(width=1, color='#38bdf8')
         ),
         hovertemplate="<b>%{y}</b><br>%{x} lượt<extra></extra>"
     ))
     fig_bar_app.update_layout(
-        title=dict(text="Xếp hạng Ứng dụng", font=dict(size=14, color='#004B87', weight='bold')),
-        xaxis=dict(gridcolor='#f1f5f9'),
+        title=dict(text="Xếp hạng truy cập (Top Applications)", font=dict(size=14, color='#e2e8f0', weight='bold')),
+        xaxis=dict(gridcolor='#1e293b'),
         yaxis=dict(gridcolor='rgba(0,0,0,0)'),
         **CHART_LAYOUT
     )
@@ -475,7 +494,7 @@ with col4:
 # =============================================
 # INSIGHT TỰ ĐỘNG
 # =============================================
-st.markdown('<div class="section-title">Nhận xét tự động</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">💡 BÁO CÁO PHÂN TÍCH NHANH (AI INSIGHTS)</div>', unsafe_allow_html=True)
 
 peak_hour = int(df_filtered.groupby('Giờ').size().idxmax()) if not df_filtered.empty else 0
 top_app   = df_filtered['ten_app'].value_counts().idxmax() if not df_filtered.empty else "—"
@@ -484,10 +503,10 @@ avg_day   = df_filtered.groupby('Ngày').size().mean() if not df_filtered.empty 
 
 ins1, ins2, ins3, ins4 = st.columns(4)
 insights = [
-    (ins1, "Giờ cao điểm",  f"{peak_hour}:00 – {peak_hour+1}:00", "Lượt truy cập đạt đỉnh"),
-    (ins2, "App dẫn đầu",   top_app,                              "Nhiều lượt nhất kỳ này"),
-    (ins3, "Ngày bận nhất", top_day,                              "Đỉnh truy cập trong kỳ"),
-    (ins4, "TB mỗi ngày",   f"{avg_day:.1f} lượt",                f"Trong kỳ: {loai_loc}"),
+    (ins1, "Đỉnh lưu lượng (Giờ)",  f"{peak_hour}:00 – {peak_hour+1}:00", "Khung giờ nghẽn mạng nhất"),
+    (ins2, "Phân hệ dẫn đầu",   top_app,                              "Nhiều lượt truy xuất dữ liệu nhất"),
+    (ins3, "Ngày cao điểm", top_day,                              "Ngày có lượng thao tác đỉnh"),
+    (ins4, "Trung bình tần suất",   f"{avg_day:.1f} request/ngày",        f"Theo phân tích kỳ: {loai_loc}"),
 ]
 for col, title, val, sub in insights:
     with col:
@@ -502,17 +521,25 @@ for col, title, val, sub in insights:
 # =============================================
 # BẢNG CHI TIẾT
 # =============================================
-st.markdown('<div class="section-title">Nhật ký chi tiết</div>', unsafe_allow_html=True)
-with st.expander(f"Xem tất cả {len(df_filtered):,} bản ghi trong kỳ '{loai_loc}'"):
+st.markdown('<div class="section-title">📂 TRUY VẾT NHẬT KÝ (LOGS)</div>', unsafe_allow_html=True)
+with st.expander(f"Mở khóa toàn bộ {len(df_filtered):,} bản ghi trong kỳ '{loai_loc}'"):
     df_show = df_filtered[['Thời gian', 'ten_app']].sort_values('Thời gian', ascending=False).copy()
     df_show['Thời gian'] = df_show['Thời gian'].dt.strftime('%H:%M:%S — %d/%m/%Y')
-    df_show.columns = ['Thời gian truy cập', 'Tên ứng dụng']
+    df_show.columns = ['Thời gian ghi nhận (Timestamp)', 'Mã Phân hệ (Module)']
     df_show.index = range(1, len(df_show) + 1)
+    
+    # Ép style bảng dữ liệu cho hợp màu tối
+    st.markdown("""
+        <style>
+            [data-testid="stDataFrame"] { background-color: rgba(15, 23, 42, 0.5) !important; border-radius: 8px;}
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.dataframe(df_show, use_container_width=True, height=400)
 
 # Footer
 st.markdown("""
-<div style="text-align:center;padding:40px 0 20px;color:#64748b;font-size:0.8rem; font-weight: 500;">
-    Hệ Sinh Thái Analytics Dashboard • Cập nhật tự động
+<div style="text-align:center;padding:40px 0 20px;color:#475569;font-size:0.8rem; font-weight: 500; letter-spacing: 1px;">
+    TGDV INTELLIGENT OPERATIONS CENTER • SYSTEM ONLINE
 </div>
 """, unsafe_allow_html=True)
